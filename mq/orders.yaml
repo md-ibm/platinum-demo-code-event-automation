@@ -1,0 +1,44 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: order
+  namespace: cp4i
+data:
+  mq.mqsc: |-
+    define ql(TO.KAFKA)
+    define ql(PAYMENT.REQ) STREAMQ(TO.KAFKA)
+    define ql(PAYMENT.RESP)
+    ALTER QMGR CHLAUTH(DISABLED) CONNAUTH(' ')
+    REFRESH SECURITY TYPE(CONNAUTH)
+---
+apiVersion: mq.ibm.com/v1beta1
+kind: QueueManager
+metadata:
+  name: orders
+  namespace: cp4i
+spec:
+  version: 9.3.4.0-r1
+  license:
+    accept: true
+    license: L-VTPK-22YZPK
+    use: "NonProduction"
+  web:
+    enabled: true
+  queueManager:
+    resources:
+      limits:
+        cpu: 1000m
+      requests:
+        cpu: 100m
+    mqsc:
+      - configMap:
+          name: order
+          items:
+            - mq.mqsc
+  template:
+    pod:
+      containers:
+        - env:
+            - name: MQSNOAUT
+              value: 'yes'
+          name: qmgr
