@@ -19,8 +19,14 @@ ORG_NAME=${3:-"ibm-demo"}
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-EP_ROLES=$(cat $SCRIPT_DIR/event-processing/ep-roles.json | base64 -w0)
-EP_USERS=$(cat $SCRIPT_DIR/event-processing/ep-users.json | base64 -w0)
+if [[ $OSTYPE == 'darwin'* ]]; then
+  echo 'Running on macOS'
+  EP_ROLES=$(cat $SCRIPT_DIR/event-processing/ep-roles.json | base64)
+EP_USERS=$(cat $SCRIPT_DIR/event-processing/ep-users.json | base64)
+else
+  EP_ROLES=$(cat $SCRIPT_DIR/event-processing/ep-roles.json | base64 -w0)
+  EP_USERS=$(cat $SCRIPT_DIR/event-processing/ep-users.json | base64 -w0)
+fi
 
 RESPONSE=$(oc patch secret ademo-ep-ibm-ep-user-credentials -n $NAMESPACE -p '{"data": {"user-credentials.json": "'$EP_USERS'"}}')
 echo Patched ademo-ep-ibm-ep-user-credentials $RESPONSE
