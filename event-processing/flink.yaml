@@ -25,7 +25,7 @@ spec:
   serviceAccount: flink
   taskManager:
     resource:
-      cpu: 4
+      cpu: 2
       memory: 3048m
   mode: native
   podTemplate:
