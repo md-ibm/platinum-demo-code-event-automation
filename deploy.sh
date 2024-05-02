@@ -22,6 +22,7 @@ BLOCK_STORAGE=${2:-"ocs-storagecluster-ceph-rbd"}
 INSTALL_CP4I=${5:-true}
 MQ_TEMPLATE=${3:-"orders.yaml_template"}
 ENABLE_CONNECTOR=${4:-false}
+FILE_STORAGE=${5:-"ocs-storagecluster-cephfs"}
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
@@ -36,6 +37,7 @@ oc project $NAMESPACE
 
 if [ "$INSTALL_CP4I" = true ] ; then
   oc patch storageclass $BLOCK_STORAGE -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+  oc patch storageclass $FILE_STORAGE -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
 fi
 
 ./install-operators.sh
