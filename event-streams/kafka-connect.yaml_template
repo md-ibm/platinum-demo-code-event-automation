@@ -39,6 +39,8 @@ spec:
     type: scram-sha-512
     username: kafka-connect-credentials
   template:
+    buildConfig:
+      pullSecret: ibm-entitlement-key
     connectContainer:
       securityContext:
         allowPrivilegeEscalation: false
